@@ -19,14 +19,4 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_KEY }}
         source: "index.html"
-        target: "/home/ec2-user"
-    
-    - name: Move file to web folder
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_KEY }}
-        script: |
-          sudo mv /home/ec2-user/index.html /var/www/html/index.html
-          sudo systemctl restart httpd
+        target: "/var/www/html/index.html"
