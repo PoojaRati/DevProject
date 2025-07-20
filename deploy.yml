@@ -1,5 +1,4 @@
-
-       name: Deploy Website to EC2
+name: Deploy Website to EC2
 
 on:
   push:
@@ -18,16 +17,16 @@ jobs:
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_KEY }}  # Make sure this secret name matches GitHub secrets
-        source: "index.html"         # Or "./" if you have multiple web files
-        target: "/var/www/html"
-
-    - name: Move file to Apache folder and restart service
-      uses: appleboy/ssh-action@v1.0.3
+        key: ${{ secrets.EC2_KEY }}
+        source: "index.html"
+        target: "/home/ec2-user"
+    
+    - name: Move file to web folder
+      uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_KEY }}
         script: |
-          sudo mv index.html /var/www/html/index.html
-          sudo systemctl restart httpd || sudo systemctl restart apache2
+          sudo mv /home/ec2-user/index.html /var/www/html/index.html
+          sudo systemctl restart httpd
