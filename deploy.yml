@@ -20,7 +20,7 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_KEY }}  # Make sure this secret name matches GitHub secrets
         source: "index.html"         # Or "./" if you have multiple web files
-        target: "/tmp"
+        target: "/var/www/html"
 
     - name: Move file to Apache folder and restart service
       uses: appleboy/ssh-action@v1.0.3
@@ -29,5 +29,5 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_KEY }}
         script: |
-          sudo mv /tmp/index.html /var/www/html/index.html
+          sudo mv index.html /var/www/html/index.html
           sudo systemctl restart httpd || sudo systemctl restart apache2
