@@ -1,4 +1,5 @@
-name: Deploy Website to EC2
+
+       name: Deploy Website to EC2
 
 on:
   push:
@@ -12,11 +13,21 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Copy files to EC2
+    - name: Copy index.html to EC2
       uses: appleboy/scp-action@v0.1.4
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_KEY }}  # Make sure this secret name matches GitHub secrets
+        source: "index.html"         # Or "./" if you have multiple web files
+        target: "/tmp"
+
+    - name: Move file to Apache folder and restart service
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_KEY }}
-        source: "."
-        target: "/var/www/html"
+        script: |
+          sudo mv /tmp/index.html /var/www/html/index.html
+          sudo systemctl restart httpd || sudo systemctl restart apache2
