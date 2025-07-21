@@ -20,3 +20,22 @@ jobs:
         key: ${{ secrets.EC2_KEY }}
         source: "index.html"
         target: "/var/www/html/index.html"
+
+
+- name: Notify on Failure
+        if: failure()
+        run: echo "Deployment Failed" | mail -s "EC2 Deployment Failed" poojarati95@email.com
+
+- name: HTML Validator
+        run: |
+          sudo apt install tidy -y
+          tidy -e index.html
+          
+- name: Backup Old Version
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            sudo cp /var/www/html/index.html /var/www/html/index_backup.html
